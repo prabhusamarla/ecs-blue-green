@@ -1,5 +1,5 @@
 #!/bin/bash
-
+shopt -s xpg_echo
 set -e
 REGION=$AWS_REGION
 REGISTRY="$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.${REGION}.amazonaws.com"
@@ -16,10 +16,13 @@ NEW_TASK_INFO=$(aws ecs register-task-definition --family $TASK_FAMILY --region 
 NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
 
 echo "Deployment is being done for service ${SERVICE_NAME} in cluster $ECS_CLUSTER with image $ECR_IMAGE .. Please wait.."
+while true; do for X in '/' '-' '\' '|'; do echo -en "\b$X"; sleep 0.1; done; done &
+PID=$!
+trap 'kill $PID' EXIT
 aws ecs update-service --cluster ${ECS_CLUSTER} --service ${SERVICE_NAME} --task-definition ${TASK_FAMILY}:${NEW_REVISION} > /dev/null 2>&1
 aws autoscaling set-desired-capacity --auto-scaling-group-name ${ECS_CLUSTER/-*/}-ASG  --desired-capacity 2 --honor-cooldown
 aws ecs wait services-stable \
     --cluster $ECS_CLUSTER \
     --services $SERVICE_NAME
-[ $? -eq 0 ] && aws autoscaling set-desired-capacity --auto-scaling-group-name ${ECS_CLUSTER/-*/}-ASG --desired-capacity 1 --honor-cooldown
-
+[ $? -eq 0 ] && aws autoscaling set-desired-capacity --auto-scaling-group-name ${ECS_CLUSTER/-*/}-ASG --desired-capacity 1 --honor-cooldown 
+kill $PID
