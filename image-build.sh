@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[ $(sudo rpm -qa|grep jq|wc -l) -eq 0 ] && sudo yum install jq -y
+
 TAG=$TAG
 REGION=$AWS_REGION
 REPO=$ECR_REPO
