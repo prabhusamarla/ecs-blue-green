@@ -13,7 +13,7 @@ pipeline {
     string(name: 'MESSAGE', defaultValue: 'Welcome to DevOpsForAll ECS Demo for Blue Targets.1.0!', description: 'Please provide Message for deployment notes.')
     choice(name: 'ECS_CLUSTER', choices: ['Blue-cluster', 'Green-cluster'], description: 'Please choose the ECS cluster you wish to do deployment for?')
     choice(name: 'ECS_SERVICE', choices: ['blue-app', 'green-app'], description: 'Please choose the ECS service name you wish to do deployment for?')
-    booleanParam(name: "Deploy", defaultValue: false,description: 'You wish to Deploy this image to ECS?.')
+    choice(choices: ['YES', 'NO'], description: 'Wish to Deploy This image?', name: 'DEPLOY')
 }
   stages {
    stage('Docker Image Build') {
@@ -31,11 +31,12 @@ pipeline {
       }
     }
    stage('Deploy to ECS') {
+      when {
+      expression { params.DEPLOY == 'YES' }
+    }
       steps {
         script {
-         if (params.DEPLOY) {
           sh './deploy.sh'
-        }
         }
       }
     }
