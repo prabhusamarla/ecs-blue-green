@@ -15,11 +15,11 @@ NEW_TASK_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_IMAGE" '.task
 NEW_TASK_INFO=$(aws ecs register-task-definition --family $TASK_FAMILY --region "$AWS_DEFAULT_REGION" --cli-input-json "$NEW_TASK_DEFINTIION")
 NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
 
-echo "Deployment is being done for service ${SERVICE_NAME} in cluster $ECS_CLUSTER" with image $ECR_IMAGE .. Please wait.."
+echo "Deployment is being done for service ${SERVICE_NAME} in cluster $ECS_CLUSTER with image $ECR_IMAGE .. Please wait.."
 aws ecs update-service --cluster ${ECS_CLUSTER} --service ${SERVICE_NAME} --task-definition ${TASK_FAMILY}:${NEW_REVISION} > /dev/null 2>&1
-aws autoscaling set-desired-capacity --auto-scaling-group-name "${ECS_CLUSTER/-*/}-ASG"  --desired-capacity 2 --honor-cooldown
+aws autoscaling set-desired-capacity --auto-scaling-group-name ${ECS_CLUSTER/-*/}-ASG  --desired-capacity 2 --honor-cooldown
 aws ecs wait services-stable \
     --cluster $ECS_CLUSTER \
     --services $SERVICE_NAME
-[ $? -eq 0 ] && aws autoscaling set-desired-capacity --auto-scaling-group-name "${ECS_CLUSTER/-*/}-ASG" --desired-capacity 1 --honor-cooldown
+[ $? -eq 0 ] && aws autoscaling set-desired-capacity --auto-scaling-group-name ${ECS_CLUSTER/-*/}-ASG --desired-capacity 1 --honor-cooldown
 
