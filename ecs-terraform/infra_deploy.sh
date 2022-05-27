@@ -8,9 +8,9 @@ cd $(dirname $0)
 if [[ $DEPLOY == "CREATE" ]];then
     docker-compose -f compose.yaml \
     run --rm -w "$WORKSPACE" \
-    --name terraform-${BUILD_NUMBER} terraform init -input=false
+    --name terraform-${BUILD_NUMBER} terraform -chdir=ecs-terraform/ init -input=false
  else
     docker-compose -f compose.yaml \
     run --rm -w "$WORKSPACE" \
-    --name terraform-${BUILD_NUMBER}  terraform destroy -auto-approve
+    --name terraform-${BUILD_NUMBER}  terraform -chdir=ecs-terraform/ destroy -auto-approve
  fi 
