@@ -1,6 +1,5 @@
 version: '3'
 services:
-     
   terraform:
      user: "${USERID}:${GROUPID}"
      image: hashicorp/terraform:1.2.0
@@ -9,5 +8,5 @@ services:
       - /etc/group:/etc/group:ro
       - "${JENKINS_HOME}:${JENKINS_HOME}:rw"
       - "${WORKSPACE}:${WORKSPACE}:rw"
-      environment:
-        DEPLOY: $DEPLOY
+     environment:
+      DEPLOY: $DEPLOY
