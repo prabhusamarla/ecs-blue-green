@@ -1,0 +1,13 @@
+version: '3'
+services:
+     
+  terraform:
+     user: "${USERID}:${GROUPID}"
+     image: hashicorp/terraform:1.2.0
+     volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - "${JENKINS_HOME}:${JENKINS_HOME}:rw"
+      - "${WORKSPACE}:${WORKSPACE}:rw"
+      environment:
+        DEPLOY: $DEPLOY

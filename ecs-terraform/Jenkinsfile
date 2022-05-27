@@ -1,0 +1,25 @@
+#!groovy
+
+pipeline {
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+    disableConcurrentBuilds()
+  }
+  agent any
+   parameters{
+    choice(choices: ['YES', 'NO'], description: 'Wish to deploy infra using terraform?', name: 'INFRA_DEPLOY')
+    choice(choices: ['CREATE', 'DESTROY'], description: 'Wish to Create or Delete/Destroy infra?', name: 'DEPLOY')
+}
+  stages {
+   stage('Create Infra') {
+      when {
+      expression { params.INFRA_DEPLOY == 'YES' }
+    }
+      steps {
+        script {
+          sh 'ecs-terraform/infra_deploy.sh'
+        }
+      }
+    }
+}
+}
