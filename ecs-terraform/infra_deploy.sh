@@ -8,7 +8,7 @@ cd $(dirname $0)
 if [[ $DEPLOY == "CREATE" ]];then
     docker-compose -f compose.yaml \
     run --rm -w "$WORKSPACE" \
-    --name terraform-${BUILD_NUMBER} terraform init -input=false && terraform apply -auto-approve
+    --name terraform-${BUILD_NUMBER} terraform init -input=false
  else
     docker-compose -f compose.yaml \
     run --rm -w "$WORKSPACE" \
