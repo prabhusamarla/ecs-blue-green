@@ -1,6 +1,5 @@
 #!/bin/bash
 shopt -s xpg_echo
-set -e
 REGION=$AWS_REGION
 REGISTRY="$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.${REGION}.amazonaws.com"
 REPO=$ECR_REPO
@@ -22,3 +21,4 @@ aws ecs wait services-stable \
     --cluster $ECS_CLUSTER \
     --services $SERVICE_NAME
 [ $? -eq 0 ] && aws autoscaling set-desired-capacity --auto-scaling-group-name ${ECS_CLUSTER/-*/}-ASG --desired-capacity 1 --honor-cooldown
+echo "Deployment completed ...!"
