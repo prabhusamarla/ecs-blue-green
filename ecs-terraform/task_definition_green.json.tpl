@@ -4,7 +4,7 @@
         "name": "green",
         "memory": 512,
         "cpu": 2,
-        "image": "nginx:latest",
+        "image": "sreeharshav/rollingupdate:v6",
         "portMappings" : [
           { "containerPort": 80 }
       ]
