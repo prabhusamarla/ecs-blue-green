@@ -4,7 +4,7 @@
         "name": "green",
         "memory": 512,
         "cpu": 2,
-        "image": "tomcat:latest",
+        "image": "nginx:latest",
         "portMappings" : [
           { "containerPort": 80 }
       ]
